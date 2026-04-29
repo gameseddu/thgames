@@ -37,41 +37,44 @@
             min-height: 100vh;
             margin: 0;
             background-color: #0f172a;
+            overflow-x: hidden;
         }
 
         .main-container {
-            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 80px 20px 40px 20px;
+            padding: 80px 20px 60px 20px;
+            width: 100%;
         }
 
-        /* Estilo da caixa de contato dentro do card */
+        /* Estilo da caixa de contato posicionada abaixo do card */
         .card-contact-box {
-            margin-top: 24px;
-            background: rgba(15, 23, 42, 0.4);
-            padding: 10px 20px;
-            border-radius: 14px;
+            margin-top: 16px; /* Espaço para não entrar na área do card */
+            background: rgba(15, 23, 42, 0.6);
+            padding: 12px 24px;
+            border-radius: 16px;
             border: 1px solid rgba(71, 85, 105, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
+            max-width: 448px; /* Mesma largura do max-w-md do card */
+            backdrop-blur: md;
         }
 
         .contact-label {
             font-family: 'Comfortaa', cursive;
             font-weight: 600;
             color: #FFD700;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
         .contact-email {
             font-family: 'Arial Black', sans-serif;
             color: #ffffff;
             margin-left: 8px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -123,12 +126,12 @@
                 <button id="next-round-btn" onclick="nextRound()" class="bg-emerald-600 text-white p-3 rounded-xl font-bold border border-emerald-500 text-sm uppercase hidden transition-all hover:bg-emerald-500 active:scale-95">Nova Rodada</button>
                 <button id="clear-board-btn" onclick="clearCurrentBoard()" class="bg-slate-700 text-white p-3 rounded-xl font-bold border border-slate-600 text-sm uppercase transition-all hover:bg-slate-600 active:scale-95">Limpar Mesa</button>
             </div>
+        </div>
 
-            <!-- CONTATO PROFISSIONAL (FIXO DENTRO DO CARD) -->
-            <div class="card-contact-box">
-                <span class="contact-label" id="label-contact">Contato Profissional:</span>
-                <span class="contact-email">contato.th047@gmail.com</span>
-            </div>
+        <!-- CONTATO PROFISSIONAL (POSICIONADO ABAIXO, SEGUE A ROLAGEM PARA BAIXO) -->
+        <div class="card-contact-box">
+            <span class="contact-label" id="label-contact">Contato Profissional:</span>
+            <span class="contact-email">contato.th047@gmail.com</span>
         </div>
     </div>
 
