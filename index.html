@@ -29,11 +29,18 @@
 
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 360px;
-            aspect-ratio: 1 / 1;
+            grid-template-columns: repeat(3, 100px); /* Tamanho fixo das colunas */
+            grid-template-rows: repeat(3, 100px);    /* Tamanho fixo das linhas */
+            gap: 12px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 400px) {
+            .game-grid {
+                grid-template-columns: repeat(3, 85px);
+                grid-template-rows: repeat(3, 85px);
+            }
         }
 
         .cell-btn {
@@ -46,11 +53,11 @@
             font-weight: 800;
             transition: all 0.2s ease;
             border: 1px solid rgba(255,255,255,0.03);
-            /* Garantir tamanho fixo para evitar deformação */
+            /* Forçar tamanho quadrado absoluto para evitar qualquer deformação */
             width: 100%;
             height: 100%;
-            min-height: 80px;
-            aspect-ratio: 1 / 1;
+            padding: 0;
+            line-height: 0;
         }
 
         .cell-btn:hover:not(:disabled) {
@@ -268,8 +275,8 @@
                         </div>
 
                         {/* Centro: Jogo */}
-                        <div className="w-full max-w-[360px] space-y-4">
-                            <div className="glass-panel p-4 shadow-xl">
+                        <div className="w-full max-w-fit space-y-4">
+                            <div className="glass-panel p-5 shadow-xl">
                                 <div className="game-grid">
                                     {board.map((cell, i) => {
                                         const isWin = roundWinner?.line.includes(i);
@@ -285,7 +292,7 @@
                                     })}
                                 </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 max-w-[324px] mx-auto">
                                 <button onClick={resetTable} className="flex-1 py-3 bg-[#1e293b] hover:bg-slate-700 rounded-xl text-[10px] font-black uppercase transition-all">Limpar Mesa</button>
                                 <button onClick={resetScores} className="flex-1 py-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-[10px] font-black uppercase transition-all border border-rose-500/20">Zerar Pontos</button>
                             </div>
@@ -354,7 +361,7 @@
                                         </div>
                                     </div>
                                     <p className="text-[9px] text-slate-500 italic px-2 leading-relaxed">
-                                        Obrigado por ajudar a manter o Jogo da Velha Infinito sem anúncios!
+                                        Obrigado por ajudar a manter o Jogo da Velha Infinito<br/>sem anúncios!
                                     </p>
                                 </div>
                             </div>
