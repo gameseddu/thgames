@@ -13,30 +13,44 @@
         
         body, html { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #0a0f1e; 
+            background-color: #050810; 
             margin: 0; padding: 0;
             color: white;
             overflow-x: hidden;
             min-height: 100vh;
         }
 
+        /* Fundo Dinâmico Sutil */
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
         .glass-panel {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(3, 100px); /* Tamanho fixo das colunas */
-            grid-template-rows: repeat(3, 100px);    /* Tamanho fixo das linhas */
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
             gap: 12px;
             width: fit-content;
             margin: 0 auto;
         }
 
-        @media (max-width: 400px) {
+        @media (max-width: 450px) {
             .game-grid {
                 grid-template-columns: repeat(3, 85px);
                 grid-template-rows: repeat(3, 85px);
@@ -44,31 +58,34 @@
         }
 
         .cell-btn {
-            background: #161e2d;
-            border-radius: 1rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 1.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             font-weight: 800;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.03);
-            /* Forçar tamanho quadrado absoluto para evitar qualquer deformação */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             width: 100%;
             height: 100%;
             padding: 0;
             line-height: 0;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.02);
         }
 
         .cell-btn:hover:not(:disabled) {
-            background: #1e293b;
-            transform: scale(1.02);
+            background: rgba(51, 65, 85, 0.6);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.3);
         }
 
         .winning-cell {
-            background: rgba(16, 185, 129, 0.2) !important;
-            border-color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.15) !important;
+            border-color: rgba(16, 185, 129, 0.4) !important;
             color: #10b981 !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
 
         input[type=range] {
@@ -76,27 +93,77 @@
             cursor: pointer;
         }
 
-        /* Estilos do Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 1.5rem;
         }
     </style>
 </head>
 <body>
+    <div class="bg-glow"></div>
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useCallback } = React;
 
+        const translations = {
+            pt: {
+                subtitle: "TIC TAC TOE",
+                scoreboard: "Placar",
+                you: "VEZ DE \"X\"",
+                ia: "VEZ DE \"O\"",
+                aiState: "IA Inteligente",
+                on: "ON",
+                off: "OFF",
+                speed: "Tempo de Resposta",
+                clearTable: "Limpar Mesa",
+                resetPoints: "Zerar Pontos",
+                supportTitle: "⭐ Apoiar Projeto",
+                supportSubtitle: "Mantenha o jogo livre de anúncios!",
+                contributeBtn: "APOIAR AGORA",
+                contact: "Desenvolvedor",
+                pixTitle: "Apoio via PIX",
+                pixKeyLabel: "Chave E-mail",
+                copyBtn: "Copiar Chave",
+                copiedBtn: "Copiado!",
+                thanksMsg: "Obrigado por ajudar a manter o jogo\nsem anúncios!",
+                langBtn: "EN 🇺🇸"
+            },
+            en: {
+                subtitle: "TIC TAC TOE",
+                scoreboard: "Scoreboard",
+                you: "TURN OF \"X\"",
+                ia: "TURN OF \"O\"",
+                aiState: "Smart AI",
+                on: "ON",
+                off: "OFF",
+                speed: "Response Time",
+                clearTable: "Clear Board",
+                resetPoints: "Reset Scores",
+                supportTitle: "⭐ Support Project",
+                supportSubtitle: "Keep the game ad-free!",
+                contributeBtn: "SUPPORT NOW",
+                contact: "Developer",
+                pixTitle: "Support via PIX",
+                pixKeyLabel: "Email Key",
+                copyBtn: "Copy Key",
+                copiedBtn: "Copied!",
+                thanksMsg: "Thank you for helping keep the game\nad-free!",
+                langBtn: "PT 🇧🇷"
+            }
+        };
+
         function App() {
+            const [lang, setLang] = useState('pt');
+            const t = translations[lang];
+
             const [board, setBoard] = useState(Array(9).fill(null));
             const [xMoves, setXMoves] = useState([]); 
             const [oMoves, setOMoves] = useState([]); 
@@ -104,13 +171,13 @@
             const [roundWinner, setRoundWinner] = useState(null);
             const [scores, setScores] = useState({ X: 0, O: 0 });
             
-            // Configuração da IA
             const [aiConfig, setAiConfig] = useState({ enabled: true, difficulty: 5, speed: 600 });
             const [isAiThinking, setIsAiThinking] = useState(false);
             
-            // Modal de Apoio
             const [showSupport, setShowSupport] = useState(false);
             const [copySuccess, setCopySuccess] = useState(false);
+
+            const toggleLang = () => setLang(prev => prev === 'pt' ? 'en' : 'pt');
 
             const checkWinner = useCallback((squares) => {
                 const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
@@ -153,7 +220,6 @@
                 }
             }, [checkWinner]);
 
-            // Jogada da IA
             useEffect(() => {
                 if (aiConfig.enabled && !isXNext && !roundWinner && !isAiThinking) {
                     setIsAiThinking(true);
@@ -222,61 +288,77 @@
             };
 
             return (
-                <div className="flex flex-col items-center justify-start min-h-screen py-6 px-4 space-y-6">
+                <div className="flex flex-col items-center justify-center min-h-screen py-8 px-4 space-y-8">
                     
-                    <div className="text-center">
-                        <h1 className="text-3xl md:text-5xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 uppercase tracking-tighter">
+                    {/* Header */}
+                    <div className="text-center space-y-1">
+                        <h1 className="text-4xl md:text-6xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-500 uppercase tracking-tighter drop-shadow-sm">
                             Infinito
                         </h1>
-                        <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500 font-bold">TIC TAC TOE</p>
+                        <p className="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-bold opacity-80">{t.subtitle}</p>
                     </div>
 
-                    <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 w-full max-w-5xl">
+                    <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-6 w-full max-w-[1100px]">
                         
-                        {/* Painel Esquerdo: Placar e Controlos da IA */}
-                        <div className="w-full max-w-[300px] lg:w-60 space-y-3">
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-1">Placar</h3>
-                            <div className="space-y-2">
-                                <div className={`glass-panel p-4 flex items-center justify-between border-l-4 ${isXNext && !roundWinner ? 'border-l-blue-500' : 'border-l-transparent'}`}>
-                                    <span className="text-xs font-bold text-blue-400">VOCÊ (X)</span>
-                                    <span className="text-xl font-black">{scores.X}</span>
-                                </div>
-                                <div className={`glass-panel p-4 flex items-center justify-between border-l-4 ${!isXNext && !roundWinner ? 'border-l-rose-500' : 'border-l-transparent'}`}>
-                                    <span className="text-xs font-bold text-rose-400">IA (O)</span>
-                                    <span className="text-xl font-black">{scores.O}</span>
+                        {/* Painel Esquerdo: Controle & Placar */}
+                        <div className="w-full max-w-[324px] lg:w-72 flex flex-col gap-4">
+                            <button 
+                                onClick={toggleLang}
+                                className="w-full py-3 glass-panel hover:bg-white/5 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 border-white/5 active:scale-[0.98]"
+                            >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                {t.langBtn}
+                            </button>
+
+                            <div className="glass-panel p-5 space-y-4 flex-1">
+                                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-1 border-b border-white/5 pb-2">{t.scoreboard}</h3>
+                                <div className="space-y-3">
+                                    <div className={`p-4 rounded-2xl flex items-center justify-between transition-all ${isXNext && !roundWinner ? 'bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]' : 'bg-white/5 border border-transparent opacity-60'}`}>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-blue-400 uppercase leading-tight mb-1">{t.you}</span>
+                                            <span className="text-xl font-black text-blue-400">X</span>
+                                        </div>
+                                        <span className="text-3xl font-black">{scores.X}</span>
+                                    </div>
+                                    <div className={`p-4 rounded-2xl flex items-center justify-between transition-all ${!isXNext && !roundWinner ? 'bg-rose-500/10 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]' : 'bg-white/5 border border-transparent opacity-60'}`}>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-rose-400 uppercase leading-tight mb-1">{t.ia}</span>
+                                            <span className="text-xl font-black text-rose-400">O</span>
+                                        </div>
+                                        <span className="text-3xl font-black">{scores.O}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Controlos da IA */}
-                            <div className="glass-panel p-4 space-y-4 mt-4">
+                            <div className="glass-panel p-5 space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black uppercase text-slate-400">Estado IA</span>
+                                    <span className="text-[10px] font-black uppercase text-slate-400">{t.aiState}</span>
                                     <button 
                                         onClick={() => setAiConfig({...aiConfig, enabled: !aiConfig.enabled})}
-                                        className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase transition-colors ${aiConfig.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}
+                                        className={`px-4 py-1.5 rounded-full text-[9px] font-bold uppercase transition-all active:scale-95 ${aiConfig.enabled ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/20 text-rose-400 border border-rose-500/20'}`}
                                     >
-                                        {aiConfig.enabled ? 'Ligada' : 'Desligada'}
+                                        {aiConfig.enabled ? t.on : t.off}
                                     </button>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-black uppercase text-slate-400">Velocidade</span>
-                                        <span className="text-[10px] font-mono text-blue-400">{aiConfig.speed}ms</span>
+                                        <span className="text-[10px] font-black uppercase text-slate-500">{t.speed}</span>
+                                        <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">{aiConfig.speed}ms</span>
                                     </div>
                                     <input 
                                         type="range" min="100" max="1500" step="100" 
                                         disabled={!aiConfig.enabled}
                                         value={aiConfig.speed} 
                                         onChange={(e) => setAiConfig({...aiConfig, speed: parseInt(e.target.value)})}
-                                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none disabled:opacity-30"
+                                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none disabled:opacity-20 accent-blue-500"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Centro: Jogo */}
-                        <div className="w-full max-w-fit space-y-4">
-                            <div className="glass-panel p-5 shadow-xl">
+                        {/* Centro: Jogo principal */}
+                        <div className="w-full max-w-[324px] md:max-w-none flex flex-col gap-4">
+                            <div className="glass-panel p-6 shadow-2xl flex items-center justify-center flex-1">
                                 <div className="game-grid">
                                     {board.map((cell, i) => {
                                         const isWin = roundWinner?.line.includes(i);
@@ -284,7 +366,7 @@
                                         return (
                                             <button key={i} onClick={() => handlePlay(i)} disabled={cell !== null || roundWinner || isAiThinking}
                                                 className={`cell-btn ${isWin ? 'winning-cell' : ''}`}>
-                                                <span className={`${cell === 'X' ? 'text-blue-400' : 'text-rose-400'} ${isFading ? 'opacity-20 blur-[1px]' : 'opacity-100'}`}>
+                                                <span className={`${cell === 'X' ? 'text-blue-400' : 'text-rose-400'} ${isFading ? 'opacity-20 blur-[2px]' : 'opacity-100'} transition-all duration-500`}>
                                                     {cell}
                                                 </span>
                                             </button>
@@ -292,76 +374,90 @@
                                     })}
                                 </div>
                             </div>
-                            <div className="flex gap-2 max-w-[324px] mx-auto">
-                                <button onClick={resetTable} className="flex-1 py-3 bg-[#1e293b] hover:bg-slate-700 rounded-xl text-[10px] font-black uppercase transition-all">Limpar Mesa</button>
-                                <button onClick={resetScores} className="flex-1 py-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-[10px] font-black uppercase transition-all border border-rose-500/20">Zerar Pontos</button>
+                            
+                            <div className="flex gap-3">
+                                <button onClick={resetScores} className="flex-1 py-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-2xl text-[10px] font-black uppercase transition-all border border-rose-500/10 active:scale-95">
+                                    {t.resetPoints}
+                                </button>
+                                <button onClick={resetTable} className="flex-1 py-4 bg-slate-800/80 hover:bg-slate-700 rounded-2xl text-[10px] font-black uppercase transition-all border border-white/5 active:scale-95">
+                                    {t.clearTable}
+                                </button>
                             </div>
                         </div>
 
-                        {/* Painel Direito: Apoiar e Contato */}
-                        <div className="w-full max-w-[300px] lg:w-60 space-y-4">
-                            <div className="glass-panel p-5 bg-gradient-to-br from-amber-500/10 to-orange-600/10 border-amber-500/30 text-center">
-                                <h4 className="text-amber-400 text-[10px] font-black uppercase tracking-widest mb-2">⭐ Apoiar</h4>
-                                <p className="text-[9px] text-slate-400 mb-4">Mantenha o projeto vivo!</p>
-                                <button 
-                                    onClick={() => setShowSupport(true)}
-                                    className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black rounded-xl text-[10px] uppercase shadow-lg transition-all active:scale-95"
-                                >
-                                    CONTRIBUA AGORA
-                                </button>
+                        {/* Painel Direito: Apoio & Comunidade */}
+                        <div className="w-full max-w-[324px] lg:w-72 flex flex-col gap-4">
+                            <div className="glass-panel p-6 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent border-amber-500/20 flex-1 flex flex-col justify-center">
+                                <div className="text-center space-y-4">
+                                    <div className="inline-block p-3 bg-amber-500/20 rounded-2xl text-amber-500 mb-2">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                                    </div>
+                                    <h4 className="text-amber-400 text-xs font-black uppercase tracking-widest">{t.supportTitle}</h4>
+                                    <p className="text-[10px] text-slate-400 leading-relaxed">{t.supportSubtitle}</p>
+                                    <button 
+                                        onClick={() => setShowSupport(true)}
+                                        className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-[10px] uppercase shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all active:scale-95"
+                                    >
+                                        {t.contributeBtn}
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="glass-panel p-5">
-                                <h4 className="text-blue-400 text-[10px] font-black uppercase mb-3 px-1">Contato</h4>
+                            <div className="glass-panel p-6 space-y-4">
+                                <h4 className="text-blue-400 text-[10px] font-black uppercase tracking-widest border-b border-white/5 pb-2">{t.contact}</h4>
                                 <div className="space-y-4">
                                     <a href="https://www.instagram.com/rafael.hpk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                                        <div className="p-2 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-lg text-white transition-transform group-hover:scale-110">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                        <div className="p-2.5 bg-gradient-to-tr from-purple-600 to-rose-500 rounded-xl text-white shadow-lg transition-transform group-hover:scale-110">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
                                         </div>
-                                        <span className="text-[10px] font-bold text-slate-300">rafael.hpk</span>
+                                        <span className="text-[11px] font-bold text-slate-300 group-hover:text-white transition-colors">@rafael.hpk</span>
                                     </a>
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-slate-800 rounded-lg text-blue-400">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><rect width="20" height="16" x="2" y="4" rx="2"/></svg>
+                                        <div className="p-2.5 bg-slate-800 rounded-xl text-blue-400 border border-white/5">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><rect width="20" height="16" x="2" y="4" rx="2"/></svg>
                                         </div>
-                                        <span className="text-[9px] font-bold text-slate-400 truncate">contato.th047@gmail.com</span>
+                                        <span className="text-[10px] font-bold text-slate-400 truncate max-w-[140px]">contato.th047@gmail.com</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Modal de Apoio Corrigido */}
+                    {/* Modal PIX */}
                     {showSupport && (
                         <div className="modal-overlay" onClick={() => setShowSupport(false)}>
-                            <div className="bg-slate-900 border border-slate-700 w-full max-w-xs p-6 rounded-3xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => setShowSupport(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            <div className="glass-panel bg-slate-900 border-slate-700 w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl relative animate-in zoom-in duration-300" onClick={e => e.stopPropagation()}>
+                                <button onClick={() => setShowSupport(false)} className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors p-2">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
                                 </button>
                                 
-                                <div className="text-center space-y-5">
-                                    <h2 className="text-amber-400 font-black uppercase text-xs tracking-widest">PIX para Apoio</h2>
-                                    
-                                    {/* Placeholder QR CODE */}
-                                    <div className="w-32 h-32 bg-white/5 border-2 border-dashed border-slate-700 rounded-2xl mx-auto flex flex-col items-center justify-center">
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-600 mb-2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h2v2H7zM15 7h2v2h-2zM7 15h2v2H7zM15 15h2v2h-2z"/><path d="M11 11h2v2h-2z"/></svg>
-                                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-[0.2em]">QR CODE</span>
+                                <div className="text-center space-y-6">
+                                    <div className="space-y-1">
+                                        <h2 className="text-amber-400 font-black uppercase text-sm tracking-[0.2em]">{t.pixTitle}</h2>
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest opacity-60">Brasil / Brazil</p>
                                     </div>
 
-                                    <div className="space-y-2 pt-2">
-                                        <p className="text-[9px] text-slate-500 uppercase font-black text-left ml-1">Chave E-mail</p>
-                                        <div className="flex items-center gap-2 bg-black/40 p-3 rounded-xl border border-white/5 shadow-inner">
-                                            <span className="text-[10px] font-bold text-slate-300 truncate">contato.th047@gmail.com</span>
+                                    <div className="w-40 h-40 bg-white p-3 rounded-3xl mx-auto shadow-inner flex items-center justify-center">
+                                        <div className="w-full h-full border-4 border-slate-100 rounded-xl flex flex-col items-center justify-center">
+                                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1e293b" strokeWidth="1.5"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h2v2H7zM15 7h2v2h-2zM7 15h2v2H7zM15 15h2v2h-2z"/><path d="M11 11h2v2h-2z"/></svg>
+                                            <span className="text-[9px] font-black text-slate-400 mt-2">PIX CODE</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3 text-left">
+                                        <p className="text-[10px] text-slate-500 uppercase font-black ml-1 tracking-wider">{t.pixKeyLabel}</p>
+                                        <div className="flex flex-col gap-2 bg-black/40 p-4 rounded-2xl border border-white/5">
+                                            <span className="text-[11px] font-bold text-blue-400 break-all text-center">contato.th047@gmail.com</span>
                                             <button 
                                                 onClick={copyPix}
-                                                className={`ml-auto px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all shadow-sm ${copySuccess ? 'bg-emerald-500 text-white' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
+                                                className={`w-full py-3 rounded-xl text-[10px] font-black uppercase transition-all shadow-lg ${copySuccess ? 'bg-emerald-500 text-white' : 'bg-blue-600 text-white hover:bg-blue-500 active:scale-[0.98]'}`}
                                             >
-                                                {copySuccess ? 'Copiado!' : 'Copiar'}
+                                                {copySuccess ? t.copiedBtn : t.copyBtn}
                                             </button>
                                         </div>
                                     </div>
-                                    <p className="text-[9px] text-slate-500 italic px-2 leading-relaxed">
-                                        Obrigado por ajudar a manter o Jogo da Velha Infinito<br/>sem anúncios!
+                                    <p className="text-[10px] text-slate-400 italic px-4 whitespace-pre-line leading-relaxed opacity-80">
+                                        {t.thanksMsg}
                                     </p>
                                 </div>
                             </div>
