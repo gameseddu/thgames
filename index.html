@@ -126,14 +126,14 @@
                 clearTable: "Limpar Mesa",
                 resetPoints: "Zerar Pontos",
                 supportTitle: "⭐ Apoiar Projeto",
-                supportSubtitle: "Mantenha o jogo livre de anúncios!",
+                supportSubtitle: "Mantenha o jogo vivo.",
                 contributeBtn: "APOIAR AGORA",
                 contact: "Desenvolvedor",
                 pixTitle: "Apoio via PIX",
-                pixKeyLabel: "Chave E-mail",
+                pixKeyLabel: "Chave PIX",
                 copyBtn: "Copiar Chave",
                 copiedBtn: "Copiado!",
-                thanksMsg: "Obrigado por ajudar a manter o jogo\nsem anúncios!",
+                thanksMsg: "Obrigado por ajudar a manter o jogo\nvivo e sem anúncios!",
                 langBtn: "EN 🇺🇸"
             },
             en: {
@@ -148,14 +148,14 @@
                 clearTable: "Clear Board",
                 resetPoints: "Reset Scores",
                 supportTitle: "⭐ Support Project",
-                supportSubtitle: "Keep the game ad-free!",
+                supportSubtitle: "Keep the game alive.",
                 contributeBtn: "SUPPORT NOW",
                 contact: "Developer",
                 pixTitle: "Support via PIX",
-                pixKeyLabel: "Email Key",
+                pixKeyLabel: "PIX Key",
                 copyBtn: "Copy Key",
                 copiedBtn: "Copied!",
-                thanksMsg: "Thank you for helping keep the game\nad-free!",
+                thanksMsg: "Thank you for helping keep the game\nalive and ad-free!",
                 langBtn: "PT 🇧🇷"
             }
         };
@@ -276,7 +276,7 @@
             const resetScores = () => { resetTable(); setScores({ X: 0, O: 0 }); };
 
             const copyPix = () => {
-                const pix = "contato.th047@gmail.com";
+                const pix = "11837922985";
                 const el = document.createElement('textarea');
                 el.value = pix;
                 document.body.appendChild(el);
@@ -447,7 +447,7 @@
                                     <div className="space-y-3 text-left">
                                         <p className="text-[10px] text-slate-500 uppercase font-black ml-1 tracking-wider">{t.pixKeyLabel}</p>
                                         <div className="flex flex-col gap-2 bg-black/40 p-4 rounded-2xl border border-white/5">
-                                            <span className="text-[11px] font-bold text-blue-400 break-all text-center">contato.th047@gmail.com</span>
+                                            <span className="text-[11px] font-bold text-blue-400 break-all text-center">11837922985</span>
                                             <button 
                                                 onClick={copyPix}
                                                 className={`w-full py-3 rounded-xl text-[10px] font-black uppercase transition-all shadow-lg ${copySuccess ? 'bg-emerald-500 text-white' : 'bg-blue-600 text-white hover:bg-blue-500 active:scale-[0.98]'}`}
